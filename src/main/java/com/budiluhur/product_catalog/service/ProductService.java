@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final DiscountService discountService;
 
     // Constructor injection
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, DiscountService discountService) {
         this.productRepository = productRepository;
+        this.discountService = discountService;
     }
 
     public List<Product> getAllProducts() {
@@ -22,6 +24,11 @@ public class ProductService {
 
     public Product getProductById(String id) throws ProductNotFoundException {
         return productRepository.findById(id);
+    }
+
+    public double getDiscountedProductPrice(String id, double discount) throws ProductNotFoundException {
+        Product product = productRepository.findById(id);
+        return discountService.calculateDiscountedPrice(product.getPrice(), discount);
     }
 
     public Product createProduct(Product product) {
